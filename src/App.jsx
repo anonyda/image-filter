@@ -34,51 +34,51 @@ function App() {
     }
   };
 
-  // const registerWorker = () => {
-  //   // create a web worker
-  //   const imageWorker = new Worker(
-  //     new URL("ImageFilterWorker.js", import.meta.url)
-  //   );
+  const registerWorker = () => {
+    // create a web worker
+    const imageWorker = new Worker(
+      new URL("ImageFilterWorker.js", import.meta.url)
+    );
 
-  //   // attach the event handler
-  //   imageWorker.onmessage = (event) => {
-  //     // receive data from web worker
-  //     const processedData = event.data;
+    // attach the event handler
+    imageWorker.onmessage = (event) => {
+      // receive data from web worker
+      const processedData = event.data;
 
-  //     // draw the image
-  //     const canvas = document.createElement("canvas");
-  //     const ctx = canvas.getContext("2d");
-  //     canvas.width = processedData.width;
-  //     canvas.height = processedData.height;
-  //     ctx.putImageData(processedData, 0, 0);
+      // draw the image
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = processedData.width;
+      canvas.height = processedData.height;
+      ctx.putImageData(processedData, 0, 0);
 
-  //     setFilteredImage(canvas.toDataURL()); // Convert to Data URL for displaying
+      setFilteredImage(canvas.toDataURL()); // Convert to Data URL for displaying
 
-  //     imageWorker.terminate();
-  //   };
-  //   return imageWorker;
-  // };
+      imageWorker.terminate();
+    };
+    return imageWorker;
+  };
 
-  // const applyFilterWithWW = () => {
-  //   if (originalImage) {
-  //     setFilteredImage(null);
+  const applyFilterWithWW = () => {
+    if (originalImage) {
+      setFilteredImage(null);
 
-  //     const imageWorker = registerWorker();
+      const imageWorker = registerWorker();
 
-  //     const image = new Image();
-  //     image.src = originalImage;
-  //     image.onload = () => {
-  //       const canvas = document.createElement("canvas");
-  //       const ctx = canvas.getContext("2d");
-  //       canvas.width = image.width;
-  //       canvas.height = image.height;
-  //       ctx.drawImage(image, 0, 0);
-  //       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const image = new Image();
+      image.src = originalImage;
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        ctx.drawImage(image, 0, 0);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-  //       imageWorker.postMessage(imageData);
-  //     };
-  //   }
-  // };
+        imageWorker.postMessage(imageData);
+      };
+    }
+  };
 
 
   return (
@@ -99,9 +99,9 @@ function App() {
           />
           <div className="button-container">
             <button onClick={applyFilter}>Apply Heavy Filter</button>
-            {/* <button onClick={applyFilterWithWW}>
+            <button onClick={applyFilterWithWW}>
               Apply Heavy Filter With WW
-            </button> */}
+            </button>
           </div>
           {/* <br /> */}
           <div className="img-container">
