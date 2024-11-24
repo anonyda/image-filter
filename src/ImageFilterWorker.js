@@ -1,6 +1,13 @@
 
-self.onmessage = (event) => {
-  let processedImageData = event.data;
+self.onmessage = async (event) => {
+  const imageBitmap = event.data;
+  
+   const canvas = new OffscreenCanvas(imageBitmap.width, imageBitmap.height);
+   const ctx = canvas.getContext("2d");
+   ctx.drawImage(imageBitmap, 0, 0);
+   let processedImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+
 
   processedImageData = gaussianBlur(processedImageData, 5); 
 
@@ -10,7 +17,11 @@ self.onmessage = (event) => {
 
   processedImageData = enhanceContrast(processedImageData, 1.5);
 
-  self.postMessage(processedImageData);
+  ctx.putImageData(processedImageData, 0, 0);
+
+  const blob = await canvas.convertToBlob();
+
+  self.postMessage(blob);
 };
 
 

@@ -41,18 +41,15 @@ function App() {
     );
 
     // attach the event handler
-    imageWorker.onmessage = (event) => {
+    imageWorker.onmessage = async (event) => {
       // receive data from web worker
-      const processedData = event.data;
+      const blob = event.data; // Receive Blob from the worker
 
-      // draw the image
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      canvas.width = processedData.width;
-      canvas.height = processedData.height;
-      ctx.putImageData(processedData, 0, 0);
+      // Convert Blob to ObjectURL
+      const url = URL.createObjectURL(blob);
+      console.log(url);
+      setFilteredImage(url);
 
-      setFilteredImage(canvas.toDataURL()); // Convert to Data URL for displaying
 
       imageWorker.terminate();
     };
@@ -67,15 +64,11 @@ function App() {
 
       const image = new Image();
       image.src = originalImage;
-      image.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = image.width;
-        canvas.height = image.height;
-        ctx.drawImage(image, 0, 0);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      image.onload = async () => {
+        const bitmap = await createImageBitmap(image); // Convert to ImageBitmap
 
-        imageWorker.postMessage(imageData);
+        imageWorker.postMessage(bitmap, [bitmap]);
+
       };
     }
   };
@@ -99,9 +92,9 @@ function App() {
           />
           <div className="button-container">
             <button onClick={applyFilter}>Apply Heavy Filter</button>
-            <button onClick={applyFilterWithWW}>
+            {/* <button onClick={applyFilterWithWW}>
               Apply Heavy Filter With WW
-            </button>
+            </button> */}
           </div>
           {/* <br /> */}
           <div className="img-container">
